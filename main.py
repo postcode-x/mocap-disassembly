@@ -1,8 +1,8 @@
 import glfw
-import numpy as np
 from OpenGL.GL import *
 from OpenGL.GL.shaders import compileShader, compileProgram
 import pyrr
+import numpy as np
 from moves import train, punch, move, spec, comp
 from PIL import Image
 
@@ -68,7 +68,7 @@ def initialize():
     all_indices = [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10,  # legs
                    13, 12, 12, 11, 11, 5,  # torso + head
                    12, 14, 14, 15, 15, 16, 16, 17, 12, 18, 18, 19, 19, 20, 20, 21]  # arms
-    
+
     indices = np.array(all_indices, dtype=np.uint32)
 
     '''
@@ -140,8 +140,9 @@ def initialize():
 
     while not glfw.window_should_close(window):
 
-        glfw.poll_events()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
+        # Render Here
 
         if glfw.get_key(window, glfw.KEY_1) == glfw.PRESS:
             color_mode = 0  # Use vertex color data
@@ -193,6 +194,8 @@ def initialize():
             capture_count += 1'''
 
         glfw.swap_buffers(window)
+
+        glfw.poll_events()
 
     glDeleteProgram(shader)
     glfw.terminate()
