@@ -75,16 +75,16 @@ def initialize():
     MAIN VAO, VBO and EBO
     '''
 
-    vao = glGenVertexArrays(2)
-    vbo = glGenBuffers(2)
-    ebo = glGenBuffers(2)
+    vao = glGenVertexArrays(1)
+    vbo = glGenBuffers(1)
+    ebo = glGenBuffers(1)
 
-    glBindVertexArray(vao[0])
+    glBindVertexArray(vao)
 
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[0])
+    glBindBuffer(GL_ARRAY_BUFFER, vbo)
     glBufferData(GL_ARRAY_BUFFER, vertices[0].nbytes, vertices[0], GL_DYNAMIC_DRAW)
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[0])
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo)
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.nbytes, indices, GL_STATIC_DRAW)
 
     glEnableVertexAttribArray(0)  # position
@@ -157,7 +157,7 @@ def initialize():
         translate = pyrr.Matrix44.from_translation([0, 0, 0])
         model = translate
 
-        glBindVertexArray(vao[0])
+        glBindVertexArray(vao)
         glUniformMatrix4fv(model_loc, 1, GL_FALSE, model)
         glDrawElements(GL_LINES, len(indices), GL_UNSIGNED_INT, None)
         glBindVertexArray(0)
