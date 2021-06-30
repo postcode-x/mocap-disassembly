@@ -30,18 +30,10 @@ fragment_shader = """
 
 in vec3 v_color;
 out vec4 out_color;
-uniform int color_mode;
 
 void main()
 {
-    vec3 test_color = vec3(0.16f, 0.3f, 0.5f);
-
-    if (color_mode == 0){
-        out_color = vec4(v_color, 1.0f);
-    }
-    else if (color_mode == 1){
-        out_color = vec4(test_color, 1.0f);  
-    }
+    out_color = vec4(v_color, 1.0f);
 }
 """
 
@@ -50,7 +42,7 @@ def initialize():
     if not glfw.init():
         raise Exception("glfw can not be initialized!")
 
-    display = (1280, 720)  # 1280, 720
+    display = (1280, 720)  
     window = glfw.create_window(display[0], display[1], "OpenGL window", None, None)
 
     if not window:
@@ -61,9 +53,9 @@ def initialize():
 
     vertices = np.array([np.array(train, dtype=np.float32),
                          np.array(punch, dtype=np.float32),
-                         np.array(move, dtype=np.float32),
-                         np.array(spec, dtype=np.float32),
-                         np.array(comp, dtype=np.float32)], dtype=object)
+                         np.array(move,  dtype=np.float32),
+                         np.array(spec,  dtype=np.float32),
+                         np.array(comp,  dtype=np.float32)], dtype=object)
 
     all_indices = [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10,  # legs
                    13, 12, 12, 11, 11, 5,  # torso + head
@@ -104,10 +96,9 @@ def initialize():
 
     glUseProgram(shader)
 
-    model_loc = glGetUniformLocation(shader, "model")
     projection_loc = glGetUniformLocation(shader, "projection")
     view_loc = glGetUniformLocation(shader, "view")
-    color_mode_loc = glGetUniformLocation(shader, "color_mode")
+    model_loc = glGetUniformLocation(shader, "model")
 
     '''
     VIEWPORT AND CAMERA
@@ -126,7 +117,6 @@ def initialize():
     glEnable(GL_DEPTH_TEST)
     glClearColor(0.2, 0.2, 0.3, 0.25)
     glLineWidth(2.5)
-    color_mode = 0
     anim_index = 0
     frame_index = 0
     counter = 0
@@ -135,7 +125,7 @@ def initialize():
     capture_count = 0
 
     '''
-    MAIN APP LOOP
+    MAIN LOOP
     '''
 
     while not glfw.window_should_close(window):
@@ -143,16 +133,6 @@ def initialize():
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         # Render Here
-
-        if glfw.get_key(window, glfw.KEY_1) == glfw.PRESS:
-            color_mode = 0  # Use vertex color data
-        if glfw.get_key(window, glfw.KEY_2) == glfw.PRESS:
-            color_mode = 1  # Use single color defined inside shader
-
-        if color_mode == 0:
-            glUniform1i(color_mode_loc, 0)
-        else:
-            glUniform1i(color_mode_loc, 1)
 
         translate = pyrr.Matrix44.from_translation([0, 0, 0])
         model = translate
