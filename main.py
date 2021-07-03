@@ -42,7 +42,7 @@ def initialize():
     if not glfw.init():
         raise Exception("glfw can not be initialized!")
 
-    display = (1280, 720)  
+    display = (1280, 720)
     window = glfw.create_window(display[0], display[1], "OpenGL window", None, None)
 
     if not window:
@@ -117,6 +117,7 @@ def initialize():
     glEnable(GL_DEPTH_TEST)
     glClearColor(0.2, 0.2, 0.3, 0.25)
     glLineWidth(2.5)
+
     anim_index = 0
     frame_index = 0
     counter = 0
@@ -134,13 +135,18 @@ def initialize():
 
         # Render Here
 
-        translate = pyrr.Matrix44.from_translation([0, 0, 0])
-        model = translate
+        model = pyrr.Matrix44.from_translation([0, 0, 0])
 
         glBindVertexArray(vao)
         glUniformMatrix4fv(model_loc, 1, GL_FALSE, model)
         glDrawElements(GL_LINES, len(indices), GL_UNSIGNED_INT, None)
         glBindVertexArray(0)
+
+        glBufferData(GL_ARRAY_BUFFER, vertices[anim_index].nbytes, vertices[anim_index][frame_index], GL_DYNAMIC_DRAW)
+
+        view = pyrr.matrix44.create_look_at([800 * np.cos(counter), 800, 800 * np.sin(counter)], [0, 350, 0], [0, 1, 0])
+        glUniformMatrix4fv(view_loc, 1, GL_FALSE, view)
+        counter += 0.0007
 
         if frame_count % 50 == 0:
 
@@ -156,14 +162,6 @@ def initialize():
 
         frame_count += 1
 
-        glfw.set_window_title(window, 'anim: ' + str(anim_index) + ' - frame: ' + str(frame_index))
-        glBufferData(GL_ARRAY_BUFFER, vertices[anim_index].nbytes, vertices[anim_index][frame_index], GL_DYNAMIC_DRAW)
-
-        view = pyrr.matrix44.create_look_at([800 * np.cos(counter), 800, 800 * np.sin(counter)], [0, 350, 0],
-                                            [0, 1, 0])
-        glUniformMatrix4fv(view_loc, 1, GL_FALSE, view)
-        counter += 0.0007
-
         '''if not completed:
             image_buffer = glReadPixels(0, 0, display[0], display[1], GL_RGBA, GL_UNSIGNED_BYTE)
             image_out = np.frombuffer(image_buffer, dtype=np.uint8)
@@ -173,8 +171,8 @@ def initialize():
             img_flip.save(r"frames/image_out" + str(capture_count) + ".png")
             capture_count += 1'''
 
+        glfw.set_window_title(window, 'anim: ' + str(anim_index) + ' - frame: ' + str(frame_index))
         glfw.swap_buffers(window)
-
         glfw.poll_events()
 
     glDeleteProgram(shader)
